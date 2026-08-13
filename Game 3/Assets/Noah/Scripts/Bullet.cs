@@ -19,9 +19,7 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         //rb.linearVelocity = transform.forward * bulletSpeed;
-        rb.AddForce( transform.right * bulletSpeed, ForceMode2D.Impulse);
-    }
-
+    }  
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Destroy(gameObject);

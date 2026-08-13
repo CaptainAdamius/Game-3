@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {
+    public enum GunType { pistol, rpg }
+    public GunType gunType;
+
 
     [SerializeField] float fireRate;
     private bool shooting;
@@ -12,18 +15,38 @@ public class GunScript : MonoBehaviour
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform spawnPoint;
 
+    private Rigidbody2D bulletRb;
+    [SerializeField] float bulletSpeed;
     
+    private PlayerController playercontroller;
     
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         shooting = false;
-        
+        playercontroller = GetComponentInParent<PlayerController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        switch (gunType)
+        {
+            case GunType.pistol:
+
+                fireRate = 0.5f;
+                break;
+            case GunType.rpg:
+
+                fireRate = 2f;
+                break;
+        }
+
+
+
+
         if (Input.GetKey(KeyCode.Z) && !shooting)
         {
             StartCoroutine(Shoot());
@@ -38,9 +61,9 @@ public class GunScript : MonoBehaviour
         Debug.Log("Shoot");
         
         Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
-        
-
-
+        GetComponent<Rigidbody2D>();
+        bulletRb.AddForce( * bulletSpeed, ForceMode2D.Impulse);
+  
         yield return new WaitForSeconds(fireRate);
 
         shooting = false;
