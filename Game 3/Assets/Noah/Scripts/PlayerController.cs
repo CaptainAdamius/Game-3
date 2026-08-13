@@ -1,3 +1,5 @@
+using NUnit.Framework.Internal.Execution;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.LightAnchor;
 
@@ -8,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player Speeds")]
     [SerializeField] float moveSpeed;
     [SerializeField] float climbSpeed;
+    private float movementX;
 
     [Header("Jump Height")]
     [SerializeField] float jumpForce;
@@ -21,6 +24,8 @@ public class PlayerController : MonoBehaviour
 
     private bool climb;
 
+
+    public bool facingRight;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,7 +37,8 @@ public class PlayerController : MonoBehaviour
     {
         GroundCheck();
         jump();
-        
+        Direction();
+
     }
     void FixedUpdate()
     {
@@ -41,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void Movement()
     {
-        float movementX = Input.GetAxisRaw("Horizontal");
+        movementX = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(movementX * moveSpeed, rb.linearVelocity.y);
 
 
@@ -50,6 +56,22 @@ public class PlayerController : MonoBehaviour
             float movementY = Input.GetAxisRaw("Vertical");
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, movementY * climbSpeed);
         }
+
+
+    }
+
+    void Direction()
+    {
+
+        if (movementX > 0 && facingRight)
+        {
+            flip();
+        }
+        if (movementX < 0 && !facingRight)
+        {
+            flip();
+        }
+
     }
 
     private void jump()
@@ -61,6 +83,17 @@ public class PlayerController : MonoBehaviour
         }
         
     }
+    private void flip()
+    {
+
+        facingRight = !facingRight;
+
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
+
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -101,4 +134,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(groundCheckPos.position, groundCheckSize);//visulises the gound check box for debuging 
     }
+
+
+    
 }
