@@ -62,7 +62,7 @@ public class GunScript : MonoBehaviour
         
         Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
         GetComponent<Rigidbody2D>();
-        bulletRb.AddForce( * bulletSpeed, ForceMode2D.Impulse);
+        bulletRb.AddForce(transform.forward * bulletSpeed, ForceMode2D.Impulse);
   
         yield return new WaitForSeconds(fireRate);
 
