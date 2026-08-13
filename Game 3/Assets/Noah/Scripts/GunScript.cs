@@ -19,8 +19,8 @@ public class GunScript : MonoBehaviour
     [SerializeField] float bulletSpeed;
     
     private PlayerController playercontroller;
-    
 
+    private Vector2 direction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -51,7 +51,7 @@ public class GunScript : MonoBehaviour
         {
             StartCoroutine(Shoot());
         }
-        
+
     }
 
     IEnumerator Shoot()
@@ -61,15 +61,28 @@ public class GunScript : MonoBehaviour
         Debug.Log("Shoot");
         
         Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
-        GetComponent<Rigidbody2D>();
-        bulletRb.AddForce(transform.forward * bulletSpeed, ForceMode2D.Impulse);
+        bulletRb = bulletPrefab.GetComponent<Rigidbody2D>();
+        
+        ShootDirection();
+
+        bulletRb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
   
         yield return new WaitForSeconds(fireRate);
 
         shooting = false;
     }
 
-
+    private void ShootDirection()
+    {
+        if(playercontroller.facingRight)
+        {
+            direction = transform.right;
+        }
+        else
+        {
+            direction = -transform.right;
+        }
+    }
 
 
     // bullet prefab
