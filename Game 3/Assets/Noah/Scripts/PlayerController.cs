@@ -20,12 +20,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
     [SerializeField] Transform groundCheckPos;
     private bool isGrounded;
-    
 
     private bool climb;
 
-
     public bool facingRight;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -36,13 +35,14 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GroundCheck();
-        jump();
+        
         Direction();
-
+        jump();
     }
     void FixedUpdate()
     {
         Movement();
+        
     }
 
     private void Movement()

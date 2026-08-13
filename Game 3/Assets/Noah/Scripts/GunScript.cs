@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {
-    public enum GunType { pistol, rpg }
+    public enum GunType { Pistol, Rpg, Shotgun }
     public GunType gunType;
 
 
@@ -18,14 +18,14 @@ public class GunScript : MonoBehaviour
     private Rigidbody2D bulletRb;
     [SerializeField] float bulletSpeed;
     
-    private PlayerController playercontroller;
     
 
+    private Vector2 direction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         shooting = false;
-        playercontroller = GetComponentInParent<PlayerController>();
+        
     }
 
     // Update is called once per frame
@@ -34,24 +34,41 @@ public class GunScript : MonoBehaviour
 
         switch (gunType)
         {
-            case GunType.pistol:
+            case GunType.Pistol:
 
                 fireRate = 0.5f;
+                if (Input.GetKey(KeyCode.Z) && !shooting)
+                {
+                    StartCoroutine(Shoot());
+                }
+
                 break;
-            case GunType.rpg:
+            case GunType.Rpg:
 
                 fireRate = 2f;
+                fireRate = 0.5f;
+                if (Input.GetKey(KeyCode.Z) && !shooting)
+                {
+                    StartCoroutine(Shoot());
+                }
+
+                break;
+
+            case GunType.Shotgun:
+
+                fireRate = 2f;
+                if (Input.GetKey(KeyCode.Z) && !shooting)
+                {
+                    StartCoroutine(Shotgun());
+                }
                 break;
         }
 
 
 
 
-        if (Input.GetKey(KeyCode.Z) && !shooting)
-        {
-            StartCoroutine(Shoot());
-        }
-        
+       
+
     }
 
     IEnumerator Shoot()
@@ -61,9 +78,35 @@ public class GunScript : MonoBehaviour
         Debug.Log("Shoot");
         
         Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
-        GetComponent<Rigidbody2D>();
-        bulletRb.AddForce(transform.forward * bulletSpeed, ForceMode2D.Impulse);
+        
   
+        yield return new WaitForSeconds(fireRate);
+
+        shooting = false;
+    }
+
+
+
+    IEnumerator Shotgun()
+    {
+        shooting = true;
+
+        Debug.Log("Shoot");
+
+        
+        Quaternion rot1 = Quaternion.Euler(spawnPoint.transform.localEulerAngles.x,
+        spawnPoint.transform.localEulerAngles.y,
+        spawnPoint.transform.localEulerAngles.z + 10);
+
+        Quaternion rot2 = Quaternion.Euler(spawnPoint.transform.localEulerAngles.x,
+        spawnPoint.transform.localEulerAngles.y,
+        spawnPoint.transform.localEulerAngles.z - 10);
+
+        Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
+        Instantiate(bulletPrefab, spawnPoint.position, rot1);
+        Instantiate(bulletPrefab, spawnPoint.position, rot2);
+
+
         yield return new WaitForSeconds(fireRate);
 
         shooting = false;
@@ -89,7 +132,7 @@ public class GunScript : MonoBehaviour
 
     //shooting = false
     //return
-   
+
 
 
 

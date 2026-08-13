@@ -18,10 +18,12 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //rb.linearVelocity = transform.forward * bulletSpeed;
+        rb.linearVelocity = transform.right * bulletSpeed;
+        
     }  
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
         Destroy(gameObject);
         //pass through damage to the hit object
     }

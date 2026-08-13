@@ -613,6 +613,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2150058091872165854, guid: 45b56b971c3a4b147b9f8a422c1ea50f, type: 3}
+      propertyPath: gunType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2150058091872165854, guid: 45b56b971c3a4b147b9f8a422c1ea50f, type: 3}
+      propertyPath: bulletSpeed
+      value: 197.7
+      objectReference: {fileID: 0}
     - target: {fileID: 7830551181623513649, guid: 45b56b971c3a4b147b9f8a422c1ea50f, type: 3}
       propertyPath: m_Name
       value: Player
