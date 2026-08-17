@@ -23,14 +23,26 @@ public class Bullet : MonoBehaviour
     }  
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(!collision.CompareTag("Player") && !collision.CompareTag("Bullet"))
+        if (collision.CompareTag("Enemy"))
         {
+            // Get the EnemyHealth component and deal damage
+            if (collision.TryGetComponent<Enemy>(out var Enemy))
+            {
+                Enemy.TakeDamage(bulletDamage);
+            }
+
+            // Destroy the bullet on impact
             Destroy(gameObject);
-            
         }
-        
-        
+
+
         //pass through damage to the hit object.
+    }
+
+    public void Damage(float bulletDamage)
+    {
+        bulletDamage = 1;
+        Destroy(gameObject);
     }
 
     

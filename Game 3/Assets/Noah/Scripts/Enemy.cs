@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 
 
@@ -12,29 +13,27 @@ public class Enemy : MonoBehaviour
 {
 
     public EnemyState enemyState;
-    public GameObject player;
-    float distanceToTarget;
 
+
+
+    [SerializeField] float enemyHealth;
 
 
     [SerializeField] float rayDistance;
     [SerializeField] LayerMask hitLayer;
     [SerializeField] Transform rayStartPos;
+    Transform playerlocation;
+
 
     bool shooting;
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] float fireRate;
     [SerializeField] Transform spawnPoint;
 
-
-    public bool facingRight;
-    
-
+     bool facingRight;
 
     Rigidbody2D rb;
     [SerializeField] float moveSpeed;
-
-
 
     [SerializeField] GameObject pointA;
     [SerializeField] GameObject pointB;
@@ -42,7 +41,7 @@ public class Enemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = FindFirstObjectByType<PlayerController>().gameObject;
+        
         rb = GetComponent<Rigidbody2D>();
         currentPoint = pointB.transform;
         
@@ -51,26 +50,15 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-
         HandleState();
-
-        RaycastHit2D hit;
-        hit = Physics2D.Raycast(rayStartPos.position, -transform.right, rayDistance, hitLayer);
-        
-        if (hit)
-        {
-            enemyState = EnemyState.Attack;
-        }
-        else
-        {
-            enemyState = EnemyState.Idle;
-        }
     }
 
 
     void HandleState()
     {
+        detectPlayer();
+
+        if(enemyHealth <=0) enemyState = EnemyState.Dead;
 
 
         switch (enemyState)
@@ -85,7 +73,7 @@ public class Enemy : MonoBehaviour
 
                 break;
             case EnemyState.Dead:
-
+                dead();
 
                 break;
         }
@@ -124,16 +112,51 @@ public class Enemy : MonoBehaviour
 
     void Attack()
     {
-        if (!shooting)
-        StartCoroutine(Shoot());
+        Vector2 direction = (transform.position - playerlocation.position).normalized;
+        if(direction.x<0)
+        {
+            facingRight = true;
+            transform.rotation = Quaternion.Euler(0, 180f, 0);
+        }
+        else
+        {
+            facingRight = false;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+            
 
+        if (!shooting) StartCoroutine(Shoot());
     }
  
 
     void dead()
     {
-
+        Destroy(gameObject);
     }
+
+    public void TakeDamage(float bulletDamage)
+    {
+        enemyHealth -= bulletDamage;
+    }
+
+
+    void detectPlayer()
+    {
+        RaycastHit2D hit;
+        hit = Physics2D.Raycast(rayStartPos.position, -transform.right, rayDistance, hitLayer);
+        playerlocation = hit.transform;
+
+        if (hit)
+        {
+            enemyState = EnemyState.Attack;
+        }
+        else
+        {
+            enemyState = EnemyState.Idle;
+        }
+    }
+
+
 
 
     IEnumerator Shoot()
