@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {
-    public enum GunType { Pistol, Rpg, Shotgun }
+    public enum GunType { Pistol, Shotgun }
     public GunType gunType;
 
 
@@ -17,14 +17,15 @@ public class GunScript : MonoBehaviour
 
     private Rigidbody2D bulletRb;
     [SerializeField] float bulletSpeed;
-    
-    
 
-    private Vector2 direction;
+    private PlayerController playerController;
+
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         shooting = false;
+        playerController = GetComponentInParent<PlayerController>();
         
     }
 
@@ -43,17 +44,6 @@ public class GunScript : MonoBehaviour
                 }
 
                 break;
-            case GunType.Rpg:
-
-                fireRate = 2f;
-                fireRate = 0.5f;
-                if (Input.GetKey(KeyCode.Z) && !shooting)
-                {
-                    StartCoroutine(Shoot());
-                }
-
-                break;
-
             case GunType.Shotgun:
 
                 fireRate = 2f;
@@ -64,11 +54,6 @@ public class GunScript : MonoBehaviour
                 break;
         }
 
-
-
-
-       
-
     }
 
     IEnumerator Shoot()
@@ -76,10 +61,9 @@ public class GunScript : MonoBehaviour
         shooting = true;
 
         Debug.Log("Shoot");
+        float angle = !playerController.facingRight ? 0f : 180f;
+        Instantiate(bulletPrefab, spawnPoint.position, Quaternion.Euler(0,0, angle));
         
-        Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
-        
-  
         yield return new WaitForSeconds(fireRate);
 
         shooting = false;
@@ -91,9 +75,10 @@ public class GunScript : MonoBehaviour
     {
         shooting = true;
 
-        Debug.Log("Shoot");
 
-        
+        float angle = !playerController.facingRight ? 0f : 180f;
+
+
         Quaternion rot1 = Quaternion.Euler(spawnPoint.transform.localEulerAngles.x,
         spawnPoint.transform.localEulerAngles.y,
         spawnPoint.transform.localEulerAngles.z + 10);
@@ -113,7 +98,11 @@ public class GunScript : MonoBehaviour
     }
 
 
-
+    public void EnemyShoot()
+    {
+        StartCoroutine(Shoot());
+    }
+   
 
     // bullet prefab
 
