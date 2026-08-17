@@ -2,7 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Destrucible : MonoBehaviour
+public class Destructible : MonoBehaviour
 {
 
     /*
@@ -63,19 +63,14 @@ public class Destrucible : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                float delay = 0;
                 switch (dType)
                 {
                     case destructibleType.CRATE: break;
-                    case destructibleType.BARREL: cc.enabled = true; break;
+                    case destructibleType.BARREL: cc.enabled = true; delay = 0.1f; break;
                     case destructibleType.INDESTRUCTIBLE: break;
                 }
-
-                if (dType != destructibleType.INDESTRUCTIBLE)
-                {
-                    Debug.Log(dType.ToString() + " destroyed.");
-                    Object.Destroy(gameObject);
-                }
-                else { Debug.Log("This is indestructible."); }
+                Invoke(nameof(DestroyObject), delay);
             }
 
             if (Input.GetKeyDown(KeyCode.A) && dType == destructibleType.BARREL)
@@ -108,5 +103,15 @@ public class Destrucible : MonoBehaviour
             Gizmos.color = new Color(1, 0, 0, 0.75f);
             Gizmos.DrawSphere(testPos, radius);
         }
+    }
+
+    private void DestroyObject()
+    {
+        if (dType != destructibleType.INDESTRUCTIBLE)
+        {
+            Debug.Log(dType.ToString() + " destroyed.");
+            Object.Destroy(gameObject);
+        }
+        else { Debug.Log("This is indestructible."); }
     }
 }
