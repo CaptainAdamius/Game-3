@@ -10,7 +10,6 @@ public class Spikes : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Triggers if the spike collider is SOLID
         if (collision.gameObject.CompareTag(playerTag))
         {
             Debug.Log("collision detected with: " + collision.gameObject.name);
