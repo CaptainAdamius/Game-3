@@ -1,6 +1,7 @@
 using NUnit.Framework.Internal.Execution;
 using Unity.VisualScripting;
 using UnityEngine;
+
 using static UnityEngine.LightAnchor;
 
 public class PlayerController : MonoBehaviour
@@ -25,10 +26,16 @@ public class PlayerController : MonoBehaviour
 
     public bool facingRight;
 
+    private Vector2 playerStart;
+
+
+    [SerializeField] float playerHealth;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        playerStart = this.transform.position;
     }
 
     // Update is called once per frame
@@ -126,6 +133,13 @@ public class PlayerController : MonoBehaviour
         Debug.Log(isGrounded);
 
         
+    }
+
+    public void TakeDamage(float bulletDamage)
+    {
+        playerHealth -= bulletDamage;
+        if (playerHealth <= 0) transform.position = playerStart;
+
     }
 
     private void OnDrawGizmosSelected()

@@ -25,6 +25,10 @@ public class Enemy : MonoBehaviour
     Transform playerlocation;
 
 
+    [SerializeField] float patrolRayDis;
+    [SerializeField] LayerMask EnviromentLayer;
+    [SerializeField] Transform platformCheckRayPos;
+
     bool shooting;
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] float fireRate;
@@ -35,15 +39,20 @@ public class Enemy : MonoBehaviour
     Rigidbody2D rb;
     [SerializeField] float moveSpeed;
 
-    [SerializeField] GameObject pointA;
-    [SerializeField] GameObject pointB;
-    private Transform currentPoint;
+
+    [SerializeField] bool movement = true;
+
+    //[SerializeField] GameObject pointA;
+    //[SerializeField] GameObject pointB;
+    //private Transform currentPoint;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         
         rb = GetComponent<Rigidbody2D>();
-        currentPoint = pointB.transform;
+        //currentPoint = pointB.transform;
         
     }
 
@@ -58,13 +67,14 @@ public class Enemy : MonoBehaviour
     {
         detectPlayer();
 
-        if(enemyHealth <=0) enemyState = EnemyState.Dead;
+        if (enemyHealth <= 0) enemyState = EnemyState.Dead;
 
 
         switch (enemyState)
         {
             case EnemyState.Idle:
-                Idle();
+                
+                if(movement) Idle();
 
                 break;
       
@@ -81,31 +91,64 @@ public class Enemy : MonoBehaviour
 
     void Idle()
     {
-        Vector2 point = currentPoint.position - transform.position;
-        if (currentPoint == pointB.transform)
+        //Vector2 point = currentPoint.position - transform.position;
+        //if (currentPoint == pointB.transform)
+        //{
+        //    rb.linearVelocity = new Vector2(moveSpeed, 0f);
+        //    transform.rotation = Quaternion.Euler(0, 180f, 0);
+        //    facingRight = true;
+        //}
+        //else
+        //{
+        //    rb.linearVelocity = new Vector2(-moveSpeed, 0f);
+        //    transform.rotation = Quaternion.Euler(0, 0, 0);
+        //    facingRight = false;
+        //}
+
+
+        //if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f && currentPoint == pointB.transform)
+        //{
+        //    currentPoint = pointA.transform;
+
+        //}
+
+        //if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f && currentPoint == pointA.transform)
+        //{
+        //    currentPoint = pointB.transform;
+        //}
+
+        
+        RaycastHit2D wallHit = Physics2D.Raycast(transform.position, -transform.right, patrolRayDis, EnviromentLayer);
+        if (wallHit)
         {
-            rb.linearVelocity = new Vector2(moveSpeed, 0f);
-            transform.rotation = Quaternion.Euler(0, 180f, 0);
-            facingRight = true;
+            facingRight = !facingRight;
+            
+
         }
-        else
+
+
+        RaycastHit2D floorHit = Physics2D.Raycast(platformCheckRayPos.position, -transform.up, patrolRayDis, EnviromentLayer);
+        if (!floorHit)
+        {
+            facingRight = !facingRight;
+            
+
+        }
+
+
+        if (facingRight)
         {
             rb.linearVelocity = new Vector2(-moveSpeed, 0f);
             transform.rotation = Quaternion.Euler(0, 0, 0);
-            facingRight = false;
+
         }
-
-
-        if(Vector2.Distance(transform.position, currentPoint.position)<0.5f && currentPoint == pointB.transform)
+        if (!facingRight)
         {
-            currentPoint = pointA.transform;
+            rb.linearVelocity = new Vector2(moveSpeed, 0f);
+            transform.rotation = Quaternion.Euler(0, 180f, 0);
 
         }
 
-        if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f && currentPoint == pointA.transform)
-        {
-            currentPoint = pointB.transform;
-        }
 
     }
 
@@ -134,9 +177,11 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+   
     public void TakeDamage(float bulletDamage)
     {
         enemyHealth -= bulletDamage;
+        
     }
 
 
@@ -145,15 +190,11 @@ public class Enemy : MonoBehaviour
         RaycastHit2D hit;
         hit = Physics2D.Raycast(rayStartPos.position, -transform.right, rayDistance, hitLayer);
         playerlocation = hit.transform;
+       
+        if (hit) enemyState = EnemyState.Attack;
+        
+        else enemyState = EnemyState.Idle;
 
-        if (hit)
-        {
-            enemyState = EnemyState.Attack;
-        }
-        else
-        {
-            enemyState = EnemyState.Idle;
-        }
     }
 
 
@@ -179,7 +220,11 @@ public class Enemy : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(rayStartPos.position,-transform.right * rayDistance);  
+        Gizmos.DrawRay(rayStartPos.position,-transform.right * rayDistance);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(transform.position, -transform.right * patrolRayDis);
+        Gizmos.DrawRay(platformCheckRayPos.position, -transform.up * patrolRayDis);
     }
 
 

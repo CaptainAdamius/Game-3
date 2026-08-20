@@ -15,8 +15,7 @@ public class GunScript : MonoBehaviour
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform spawnPoint;
 
-    private Rigidbody2D bulletRb;
-    [SerializeField] float bulletSpeed;
+    
 
     private PlayerController playerController;
 

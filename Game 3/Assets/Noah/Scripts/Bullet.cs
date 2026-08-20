@@ -34,16 +34,28 @@ public class Bullet : MonoBehaviour
             // Destroy the bullet on impact
             Destroy(gameObject);
         }
+        else if (collision.CompareTag("Player"))
+        {
+            // Get the EnemyHealth component and deal damage
+            if (collision.TryGetComponent<PlayerController>(out var Player))
+            {
+                Player.TakeDamage(bulletDamage);
+            }
 
-
-        //pass through damage to the hit object.
+            // Destroy the bullet on impact
+            Destroy(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    public void Damage(float bulletDamage)
-    {
-        bulletDamage = 1;
-        Destroy(gameObject);
-    }
+ 
+
+
+   
+    
 
     
 }
