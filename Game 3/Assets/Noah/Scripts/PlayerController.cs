@@ -34,8 +34,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GroundCheck();
-        
+        GroundCheck();   
         Direction();
         jump();
     }
@@ -59,7 +58,6 @@ public class PlayerController : MonoBehaviour
 
 
     }
-
     void Direction()
     {
 
@@ -73,6 +71,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+    
 
     private void jump()
     {
@@ -132,7 +131,7 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(groundCheckPos.position, groundCheckSize);//visulises the gound check box for debuging 
+        Gizmos.DrawWireCube(groundCheckPos.transform.position, groundCheckSize);//visulises the gound check box for debuging 
     }
 
 

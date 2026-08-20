@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour
     
     Rigidbody2D rb;
     [SerializeField] float bulletSpeed;
-    [SerializeField] float bulletDaamge;
+    [SerializeField] float bulletDamage;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,8 +23,27 @@ public class Bullet : MonoBehaviour
     }  
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.CompareTag("Enemy"))
+        {
+            // Get the EnemyHealth component and deal damage
+            if (collision.TryGetComponent<Enemy>(out var Enemy))
+            {
+                Enemy.TakeDamage(bulletDamage);
+            }
 
-        Destroy(gameObject);
-        //pass through damage to the hit object
+            // Destroy the bullet on impact
+            Destroy(gameObject);
+        }
+
+
+        //pass through damage to the hit object.
     }
+
+    public void Damage(float bulletDamage)
+    {
+        bulletDamage = 1;
+        Destroy(gameObject);
+    }
+
+    
 }
