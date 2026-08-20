@@ -187,13 +187,16 @@ public class Enemy : MonoBehaviour
 
     void detectPlayer()
     {
+       
         RaycastHit2D hit;
         hit = Physics2D.Raycast(rayStartPos.position, -transform.right, rayDistance, hitLayer);
         playerlocation = hit.transform;
-       
+        
+
         if (hit) enemyState = EnemyState.Attack;
         
         else enemyState = EnemyState.Idle;
+        
 
     }
 
